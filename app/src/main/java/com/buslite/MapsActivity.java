@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,8 +42,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Button btnFindPath;
     private Button btnGTFS;
-    private EditText etOrigin;
-    private EditText etDestination;
+    private PlaceAutocompleteFragment etOrigin;
+    private PlaceAutocompleteFragment etDestination;
+    private String origin;
+    private String destination;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -55,8 +62,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         btnFindPath = (Button) findViewById(R.id.btnFindPath);
         btnGTFS = (Button) findViewById(R.id.btnGTFS);
-        etOrigin = (EditText) findViewById(R.id.etOrigin);
-        etDestination = (EditText) findViewById(R.id.etDestination);
+        etOrigin = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.etOrigin);
+        etDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.etDestination);
+        etOrigin.setHint("Enter the origin address");
+        etOrigin.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                Log.i("TesTTTTTTTTTTTTTTTTT", "Place: " + place.getName());
+                origin = place.getName().toString();
+            }
+
+            @Override
+            public void onError(Status status) {
+
+                Log.i("TEsTTTTTTTTTTTTTTT", "An error occurred: " + status);
+
+            }
+        });
+
+        etDestination.setHint("Enter the origin address");
+        etDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                Log.i("TesTTTTTTTTTTTTTTTTT", "Place: " + place.getName());
+                destination = place.getName().toString();
+            }
+
+            @Override
+            public void onError(Status status) {
+
+                Log.i("TEsTTTTTTTTTTTTTTT", "An error occurred: " + status);
+
+            }
+        });
+
+
 
         btnFindPath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,8 +116,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void sendRequest() {
-        String origin = etOrigin.getText().toString();
-        String destination = etDestination.getText().toString();
+        //String origin = etOrigin.getText().toString();
+        //String destination = etDestination.getText().toString();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
             return;

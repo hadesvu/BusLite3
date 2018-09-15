@@ -7,18 +7,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical"  >
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/etOrigin"
-        android:hint="Enter origin address" />
-
-    <EditText
+        android:orientation="horizontal">
+        <fragment
+            android:id="@+id/etOrigin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <fragment
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter destination address"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         android:id="@+id/etDestination" />
-
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,21 +39,23 @@
             android:layout_height="wrap_content"
             android:text="Find path"
             android:id="@+id/btnFindPath" />
+
         <ImageView
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_distance"/>
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_distance" />
         <TextView
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="60dp"
             android:text="0 mile"
             android:id="@+id/tvDistance" />
 
         <ImageView
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -53,6 +65,7 @@
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="60dp"
             android:text="0 min"
             android:id="@+id/tvDuration" />
 
@@ -64,8 +77,6 @@
             android:gravity="center"
             android:text="GTFS" />
     </LinearLayout>
-
-
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
