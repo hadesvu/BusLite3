@@ -31,6 +31,8 @@
 
         <activity
             android:name=".MapsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps">
 
             <intent-filter>
@@ -39,8 +41,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GtfsActivity">
 
+        <activity android:name=".GtfsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

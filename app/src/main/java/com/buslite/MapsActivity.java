@@ -4,13 +4,17 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
@@ -38,12 +42,14 @@ import Modules.DirectionFinder;
 import Modules.DirectionFinderListener;
 import Modules.Route;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, DirectionFinderListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
     private GoogleMap mMap;
+    private LinearLayout llBottomSheet;
+    private TextView tvStep;
     private Button btnFindPath;
     private Button btnGTFS;
-    private PlaceAutocompleteFragment etOrigin;
-    private PlaceAutocompleteFragment etDestination;
+    private PlaceAutocompleteFragment pafOrigin;
+    private PlaceAutocompleteFragment pafDestination;
     private String origin;
     private String destination;
     private List<Marker> originMarkers = new ArrayList<>();
@@ -60,12 +66,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        llBottomSheet= (LinearLayout)findViewById(R.id.bottom_sheet);
+        tvStep = (TextView)findViewById(R.id.tvSteps);
+        // init the bottom sheet behavior
+        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+
+        // change the state of the bottom sheet
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // set the peek height
+        //bottomSheetBehavior.setPeekHeight(340);
+
+        // set hideable or not
+        bottomSheetBehavior.setHideable(true);
+
+        // set callback for changes
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
         btnFindPath = (Button) findViewById(R.id.btnFindPath);
         btnGTFS = (Button) findViewById(R.id.btnGTFS);
-        etOrigin = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.etOrigin);
-        etDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.etDestination);
-        etOrigin.setHint("Enter the origin address");
-        etOrigin.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        pafOrigin = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.pafOrigin);
+        pafDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.pafDestination);
+        pafOrigin.setHint("Enter the origin address");
+        pafOrigin.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
 
@@ -81,8 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        etDestination.setHint("Enter the origin address");
-        etDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        pafDestination.setHint("Enter the origin address");
+        pafDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
 
@@ -103,6 +137,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnFindPath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bottomSheetBehavior.setHideable(false);
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
                 sendRequest();
             }
         });
@@ -116,8 +154,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void sendRequest() {
-        //String origin = etOrigin.getText().toString();
-        //String destination = etDestination.getText().toString();
+        //String origin = pafOrigin.getText().toString();
+        //String destination = pafDestination.getText().toString();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
             return;
@@ -212,6 +250,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 polylineOptions.add(route.points.get(i));
 
             polylinePaths.add(mMap.addPolyline(polylineOptions));
+            String textStep = new String();
+            for( int i = 0 ; i< route.steps.size(); i ++){
+                textStep += route.steps.get(i).instruction + " "
+                        + route.steps.get(i).distance.text + " "
+                        + route.steps.get(i).duration.text + "\n";
+            }
+            tvStep.setText(textStep);
         }
     }
 

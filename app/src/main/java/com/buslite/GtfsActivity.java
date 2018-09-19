@@ -63,8 +63,6 @@ public class GtfsActivity extends FragmentActivity implements OnMapReadyCallback
                 sendRequest();
             }
         },0);
-
-
     }
 
     private void draw_stop() throws UnsupportedEncodingException {
@@ -149,10 +147,8 @@ public class GtfsActivity extends FragmentActivity implements OnMapReadyCallback
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-
-
-
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -181,7 +177,6 @@ public class GtfsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
     @Override
     public void RealtimeBusFinderStart() {
         if (originMarkers != null) {
@@ -189,13 +184,11 @@ public class GtfsActivity extends FragmentActivity implements OnMapReadyCallback
                 marker.remove();
             }
         }
-
         if (destinationMarkers != null) {
             for (Marker marker : destinationMarkers) {
                 marker.remove();
             }
         }
-
         if (polylinePaths != null) {
             for (Polyline polyline:polylinePaths ) {
                 polyline.remove();
@@ -206,14 +199,10 @@ public class GtfsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void RealtimeBusFinderSuccess(List<Vehicle> vehicles) {
         for (Vehicle vehicle : vehicles) {
-
             destinationMarkers.add(mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
                     .position(vehicle.location)
             ));
-
         }
     }
-
-
 }

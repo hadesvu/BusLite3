@@ -1,6 +1,7 @@
 package Modules;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
@@ -42,7 +43,6 @@ public class DirectionFinder {
     private String createUrl() throws UnsupportedEncodingException {
         String urlOrigin = URLEncoder.encode(origin, "utf-8");
         String urlDestination = URLEncoder.encode(destination, "utf-8");
-
         return DIRECTION_URL_API + "origin=" + urlOrigin + "&destination=" + urlDestination + "&mode=" + MODE + "&key=" + GOOGLE_API_KEY;
     }
 
@@ -109,7 +109,22 @@ public class DirectionFinder {
             route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
             route.points = PolyUtil.decode(overview_polylineJson.getString("points"));
 
-
+            List<Step> steps = new ArrayList<>();
+            JSONArray jsonSteps = jsonLeg.getJSONArray("steps");
+            for (int j=0; j<jsonSteps.length(); j++){
+                JSONObject jsonStep = jsonSteps.getJSONObject(j);
+                Step step = new Step();
+                step.distance = new Distance(jsonStep.getJSONObject("distance").getString("text")
+                        ,jsonStep.getJSONObject("distance").getInt("value"));
+                step.duration = new Duration(jsonStep.getJSONObject("duration").getString("text")
+                        ,jsonStep.getJSONObject("duration").getInt("value"));
+                step.travelMode = jsonStep.getString("travel_mode");
+                Log.d("testtttt", step.travelMode);
+                step.instruction = jsonStep.getString("html_instructions");
+                Log.d("testtttt", step.instruction);
+                steps.add(step);
+                route.steps = steps;
+            }
             routes.add(route);
         }
 
